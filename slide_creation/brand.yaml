@@ -1,0 +1,30 @@
+org:
+  name: "Company-X"
+  maintainer_contact: "Bikalpa Neupane, Head of AI"        # who employees mention recurring fixes to (currently missing from your skill — decide if you're adding it back)
+
+colors:
+  primary: "0F2A4A" 
+  accent: "FF6B6B"
+  body_text: "333333"
+
+fonts:
+  heading: "Ariel"
+  body: "Ariel"
+
+logo:
+  path: "assets/company-logo.jpg"
+  position: "top-right, title slide only"
+
+slide_caps:
+  internal_update: 6            # max slides
+  client_proposal: 12           # max slides
+  exec_summary: 5               # max slides
+
+voice_rules:      
+  - "Never uses exclamation marks, even in good-news slides"
+  - "States numbers plainly — '14% increase,' never 'a whopping 14% jump'"
+  - "No rhetorical questions as slide titles"
+
+footer:
+  client_facing_text: "Company-X — Confidential"
+  applies_to: "every slide except the title"
