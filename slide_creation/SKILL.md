@@ -34,12 +34,15 @@ Board/exec summary: 5 slides max, one number or decision per slide
 appendix — never shrink font size below 14pt body / 24pt title to force a fit.
 
 ## Anti-slop Checklist
-Before rendering, check the drafted text against this list:
-- No stock openers: "In today's fast-paced world," "Unlock the power of," "Let's dive in"
-- No filler intensifiers: "truly," "seamlessly," "robust," "cutting-edge" used as decoration
-- No claim, number, or stat that isn't traceable to the user's source material — if a number is needed and absent, mark it [NEEDS INPUT] rather than inventing one
-- No content-free slides ("Thank You" slides with no next step; "Questions?" with nothing else)
-Also check drafted text against voice_rules in brand.yaml.
+Two layers — the script catches what's mechanical, you judge what's not.
+Run a deterministic check after every render, before delivering using `python scripts/slop_check.py output.pptx`
+Catches: banned filler phrases/stock openers, content-free slides (title with no body), low-specificity slides (buzzwords stacked with no number or named entity anchoring them), repeated title structure across slides, and surfaces every numeric/statistical claim for the traceability check below — it flags candidates, it does not verify them.
+If it exits non-zero on any HIGH or MEDIUM finding, fix the text and re-run before delivering — don't ship past a failing check. INFO-level findings (numeric claims) go to the traceability check below, not an automatic block.
+
+Judgment (the script can't do these):
+- Every stat the script flagged actually traces to the user's source material — if a number is needed and absent, mark it [NEEDS INPUT] rather than inventing one. This is the check that matters most; the phrase list is a cheap proxy for it.
+- Drafted text matches voice_rules in brand.yaml.
+- If this session has produced more than one deck, a quick compare: do the openings, section titles, or overall shape sound interchangeable with each other despite different source material? If so, that's convergent "house voice" — revise the later one, and let the source material's own shape (not a default template) drive structure.
 
 ## Producing the deck
 - Draft slide-by-slide content from the source material, respecting the length cap.
