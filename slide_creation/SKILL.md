@@ -65,5 +65,19 @@ what you approximated. Never block delivery over a missing nicety.
 - Never paste full slide text back into the chat response — describe the deck in
 - 1–2 sentences and deliver the file. The file is the deliverable, not the chat.
 
+## File Versioning & Edits
+When a request modifies an existing deck (add/remove/reorder a slide, edit content) rather than
+creating a new one:
+- Never overwrite the previous output file. Save the edited deck under an incremented filename
+  (e.g. `clientname_v2.pptx` following `clientname_v1.pptx`). If the user didn't name the file,
+  derive a base name from the deck topic and version it from v1.
+- State in one sentence what changed and confirm the previous version is untouched, e.g.:
+  "Added slide 4 (Pricing) — deck.pptx now has 7 slides; deck_v1.pptx (6 slides) is still available above."
+- If asked to regenerate a PDF or image export after an edit, always rebuild it from the current
+  .pptx — never assume an earlier PDF in the conversation still matches the deck's current state.
+- Internally, edits should still be targeted (insert/duplicate the specific slide, edit only the
+  changed slide's XML) per the pptx skill — this section only governs what gets saved and said,
+  not how the edit is made.
+
 ## Feedback Loop
 If the user corrects something and it seems likely to recur, mention once that Bikalpa (Head of AI) maintains this skill and can make the fix permanent.
