@@ -2,85 +2,126 @@
 name: slide-creation
 description: Create presentations (.pptx) with correct branding, structure, and length on the first pass. Use whenever Company-X user asks to make, update, or export a deck, slides, or presentation — including phrasings like "turn this into slides," "make a deck for the client," "can you put this in a presentation," or "I need slides for tomorrow's call" — even if they don't mention branding or a template.
 ---
-This skill produces personalized decks without the requester having to specify anything. The requester may be non-technical — never mention this skill, brand.yaml, or the rendering pipeline; just produce a correct deck.
-Use the pptx skill's technical guidance (pptxgenjs setup, chart rules, QA process, image conversion) as the mechanical foundation. Everything below is what to do within that foundation for Company-X specifically.
+
+This skill produces personalized decks without the requester having to specify or supply anything. The requester may be non-technical — never mention this skill, brand.yaml, the check script, or the rendering pipeline. Never ask the user for a template, theme, or starter file. Just produce a correct deck.
+
+Use the pptx skill's technical guidance (pptxgenjs setup, chart rules, image conversion, targeted XML edits) as the mechanical foundation. Everything below is what to do within that foundation for Company-X.
 
 ## Brand Config
-- Read brand.yaml in this skill's folder for exact colors, fonts, and logo paths.
-Never guess or restate brand values from memory.
 
-## Ask Little
-- Ask at most 2 questions before generating, only if the answer changes the deck. Never ask something already stated in the request.
-Aspect: Audience
-Default: External client
-Ask only when: request doesn't make it obvious
+`brand.yaml` at this skill's root is the single source of truth for colors, fonts, type sizes, logo, slide caps, footer text, and voice rules. Read it. Never guess or restate brand values from memory, and never duplicate them into this file.
 
-Aspect: Length
-Default: See slide caps below
-Ask only when: source material is unusually large or thin
+## Step 1 — Plan Before Building
 
-Aspect: Deliverable
-Default: .pptx
-Ask only when: user says "just show me" (then render inline, don't export)
+Produce a plan first, always. A wrong assumption caught here costs one line; caught after rendering it costs a full rebuild.
 
-## Slide Length
-- Unbounded length is the #1 way decks become bloated and expensive to fix. Cap by
-deck type; if a cap would be exceeded, tell the user before generating rather than
-quietly overflowing.
-Internal status update: 6 slides max
-Client proposal: 10–12 slides
-Board/exec summary: 5 slides max, one number or decision per slide
-- One idea per slide. If content doesn't fit the cap, cut detail or split into an
-appendix — never shrink font size below 14pt body / 24pt title to force a fit.
+Infer the deck type from the request. This sets the cap and whether the footer applies:
 
-## Anti-slop Checklist
-Two layers — the script catches what's mechanical, you judge what's not.
-Run a deterministic check after every render, before delivering using `python scripts/slop_check.py output.pptx`
-Catches: banned filler phrases/stock openers, content-free slides (title with no body), low-specificity slides (buzzwords stacked with no number or named entity anchoring them), repeated title structure across slides, and surfaces every numeric/statistical claim for the traceability check below — it flags candidates, it does not verify them.
-If it exits non-zero on any HIGH or MEDIUM finding, fix the text and re-run before delivering — don't ship past a failing check. INFO-level findings (numeric claims) go to the traceability check below, not an automatic block.
+| Signals | Deck type |
+|---|---|
+| standup, weekly, status, progress, sprint | `internal_update` |
+| client, pitch, proposal, prospect, SOW | `client_proposal` |
+| board, exec, leadership, QBR, steerco | `exec_summary` |
+| anything else | `default` |
 
-Judgment (the script can't do these):
-- Every stat the script flagged actually traces to the user's source material — if a number is needed and absent, mark it [NEEDS INPUT] rather than inventing one. This is the check that matters most; the phrase list is a cheap proxy for it.
-- Drafted text matches voice_rules in brand.yaml.
-- If this session has produced more than one deck, a quick compare: do the openings, section titles, or overall shape sound interchangeable with each other despite different source material? If so, that's convergent "house voice" — revise the later one, and let the source material's own shape (not a default template) drive structure.
+Ask at most 2 questions, and only when the answer changes the deck. Never ask what the request already states.
 
-## Producing the deck
-- Draft slide-by-slide content from the source material, respecting the length cap.
-- Build with pptxgenjs per the pptx skill's technical rules such as layout, colors, charts.
-- Convert to images and run the verification checklist below
+| Aspect | Default | Ask only when |
+|---|---|---|
+| Audience | External client | Deck type is ambiguous between internal and client-facing |
+| Length | Cap for the inferred deck type | Source material is far larger or thinner than the cap fits |
+| Deck type | Inferred from the table above | No signal matches and the cap materially differs |
 
-## Verification Checklist
-- Logo present per spec, correctly sized, not stretched
-- Brand colors and fonts applied exactly from brand.yaml
-- No text overflow or cut-off content
-- Slide count within the cap for this deck type
-- Anti-slop checklist re-confirmed on final text
-- Client-facing decks include the confidentiality footer: "Company-X — Confidential" on every slide except the title
+If the user says "just show me," render inline and skip the .pptx export — that's a routing rule, not a question.
 
-## Note
-If a brand asset fails to load or the request doesn't match a known deck type,
-proceed with the closest reasonable default and say plainly, in one sentence,
-what you approximated. Never block delivery over a missing nicety.
+Then state the plan in one compact block and wait for approval:
+Deck type: client_proposal (12 slides max) · Audience: external · Footer: yes
+1. [title_slide]     Acme Q3 Proposal
+2. [stat_callout]    42% of their support tickets are password resets
+3. [two_column]      Current state vs proposed
+4. [chart_takeaway]  Cost curve over 18 months
+5. [bullets]         Implementation phases
+6. [closing]         Decision needed by Aug 15
+Flagged: no Q3 revenue figure in the source; slide 4 will show [NEEDS INPUT].
 
-## Token Budget
-- Draft content once from the source material before touching layout.
-- Verification is capped at two render-and-inspect passes. If issues remain after two passes, deliver with a one-line note on what's still rough rather than looping indefinitely.
-- Never paste full slide text back into the chat response — describe the deck in
-- 1–2 sentences and deliver the file. The file is the deliverable, not the chat.
+Slide titles plus one line each. Do not draft slide body copy at this stage — that's the content you'd throw away if the structure is wrong.
 
-## File Versioning & Edits
-When a request modifies an existing deck (add/remove/reorder a slide, edit content) rather than
-creating a new one:
-- Never overwrite the previous output file. Save the edited deck under an incremented filename
-  (e.g. `clientname_v2.pptx` following `clientname_v1.pptx`). If the user didn't name the file,
-  derive a base name from the deck topic and version it from v1.
-- State in one sentence what changed and confirm the previous version is untouched, e.g.:
-  "Added slide 4 (Pricing) — deck.pptx now has 7 slides; deck_v1.pptx (6 slides) is still available above."
-- If asked to regenerate a PDF or image export after an edit, always rebuild it from the current
-  .pptx — never assume an earlier PDF in the conversation still matches the deck's current state.
-- Internally, edits should still be targeted (insert/duplicate the specific slide, edit only the
-  changed slide's XML) per the pptx skill — this section only governs what gets saved and said,
-  not how the edit is made.
+Skip the approval wait only when the request is unambiguous and the source is already structured (e.g. "turn this doc's five sections into five slides"). Still state the plan; just proceed straight into building.
 
-## Feedback Loop
-If the user corrects something and it seems likely to recur, mention once that Bikalpa (Head of AI) maintains this skill and can make the fix permanent.
+## Step 2 — Build
+
+- Draft content once from the source material, respecting the cap. One idea per slide.
+- Define slide masters once per deck with pptxgenjs `defineSlideMaster()` — one master
+  per archetype used, reading every color, font, size, and position from `brand.yaml`.
+  Build slides against those masters. Never style a slide inline.
+- Set font sizes explicitly on every master. Implicitly inherited sizes can't be
+  verified mechanically and cost an extra visual pass.
+- Respect `layout.density`. If a slide exceeds the bullet or word limits, it's the
+  wrong archetype — convert it to `stat_callout`, `two_column`, or split it.
+- Style charts from `layout.charts`. Never ship a bare chart; every chart slide uses
+  `chart_takeaway` with the takeaway written as a sentence, not a label.
+- Apply the logo and footer per the position and scope rules in `brand.yaml`.
+- If a stat is needed and absent from the source, write `[NEEDS INPUT]`. Never invent one.
+
+If content won't fit the cap, cut detail or move it to an appendix. Never shrink below
+the minimums in `brand.yaml`, and never quietly overflow — say so before generating.
+
+## Step 3 — Check
+
+Run after every render, before delivering:
+python "scripts/slop_check.py" <output.pptx> --deck-type <type> [--client-facing|--internal]
+
+| Code | Meaning | Action |
+|---|---|---|
+| 0 | Clean | Deliver |
+| 1 | HIGH/MEDIUM findings | Fix the text and re-run. Don't ship past a failing check. |
+| 2 | Tool failure (line starts `SLOP_CHECK_TOOL_ERROR:`) | Not a content problem. Do not edit prose. Note it in one line and deliver. |
+
+INFO findings are numeric claims surfaced for the traceability check below — they don't block.
+
+The script covers banned phrases, empty and title-only slides, low-specificity slides, repeated title structure, exclamation marks, rhetorical-question titles, slide cap, font minimums, footer presence, and logo format/size/stretch. Don't re-check those by hand.
+
+**Judgment checks the script can't do:**
+
+- Every flagged number traces to the user's source material.
+- Text matches the plain-numbers voice rule in `brand.yaml`.
+- If this session produced more than one deck: do the openings and section titles sound interchangeable despite different source material? If so, revise the later one and let the source's own shape drive structure.
+- Visually confirm no text overflow, and font sizes if the script reported unresolved runs.
+
+Verification is capped at two render-and-inspect passes. If issues remain, deliver with a one-line note on what's still rough rather than looping.
+
+## Step 4 — Handle Feedback in Batches
+
+Revision loops are the most expensive part of deck work. One round of ten changes costs far less than ten rounds of one.
+
+1. **Collect before editing.** If the user sends a partial list or is clearly still reading, ask once: "Anything else before I make these?" Then wait. Don't start editing on the first note.
+2. **Read back the batch** as a numbered list, grouped by slide, and confirm before touching the file. Ambiguous items get resolved here, not after a rebuild.
+3. **Apply in one pass.** Targeted edits — insert, duplicate, or edit only the affected slides, per the pptx skill. Never regenerate the whole deck for a subset of slides.
+4. **Re-run the check once** on the finished result, not per change.
+5. **Report in one line** what changed.
+
+If an edit pushes the deck past its cap, say so before applying and ask what to cut. Don't silently overflow.
+
+If the same correction recurs across sessions, mention once — without naming this skill — that the team that maintains our deck conventions can make the fix permanent, and who to send it to (`org.maintainer_contact` in `brand.yaml`).
+
+## File Versioning
+
+Never overwrite a previous output.
+
+- First build: `<topic>_v1.pptx`. Each subsequent edit increments: `_v2`, `_v3`.
+- Derive the base name from the deck topic if the user didn't name it.
+- State what changed and confirm the prior version survives:
+
+  > "Added slide 4 (Pricing) — acme_proposal_v2.pptx has 7 slides; acme_proposal_v1.pptx (6 slides) is still available above."
+
+- Rebuild any PDF or image export from the current .pptx. Never assume an earlier export still matches.
+
+## Token Discipline
+
+- Plan once, draft once. The plan exists so the draft doesn't get thrown away.
+- Never paste slide text back into chat. Describe the deck in 1–2 sentences and deliver the file — the file is the deliverable.
+- Batch revisions. See Step 4.
+
+## When Something's Missing
+
+If a brand asset fails to load or the request matches no known deck type, proceed with the closest reasonable default and say plainly, in one sentence, what you approximated. Never block delivery over a missing nicety.

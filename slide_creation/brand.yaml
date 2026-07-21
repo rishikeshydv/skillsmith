@@ -1,30 +1,135 @@
 org:
   name: "Company-X"
-  maintainer_contact: "Bikalpa Neupane, Head of AI"        # who employees mention recurring fixes to (currently missing from your skill — decide if you're adding it back)
+  maintainer_contact: "Bikalpa Neupane, Head of AI"
+
+layout:
+  canvas:
+    width_in: 13.333
+    height_in: 7.5
+
+  margins:
+    left_in: 0.7
+    right_in: 0.7
+    top_in: 0.5
+    bottom_in: 0.55
+
+  grid:
+    title_y_in: 0.55        
+    title_h_in: 0.9
+    body_y_in: 1.7            
+    gutter_in: 0.4            
+    footer_y_in: 6.95
+
+  density:
+    max_bullets_per_slide: 5
+    max_words_per_bullet: 12
+    max_consecutive_bullet_slides: 2 
+
+  charts:
+    gridline_weight_pt: 0.75
+    axis_label_size: 12
+    data_label_size: 12
+    legend: "bottom"     
+    max_series: 6
+
+  archetypes:
+    title_slide:
+      use: "Slide 1 only"
+      elements: "deck title (44pt), subtitle/client (20pt, muted_text), date, logo top-right"
+      fill: "background"
+
+    section_divider:
+      use: "Between major sections in decks of 8+ slides"
+      elements: "section name centered (32pt, on_primary), optional number"
+      fill: "primary"
+
+    stat_callout:
+      use: "One number that carries the slide"
+      elements: "figure (72pt, accent), one-line context below (18pt), source note (12pt, muted_text)"
+      fill: "background"
+
+    bullets:
+      use: "Default. Subject to density limits above."
+      elements: "title, 3-5 bullets"
+      fill: "background"
+
+    two_column:
+      use: "Compare, before/after, pros/cons"
+      elements: "title, two equal columns with headers (18pt bold), body 16pt"
+      fill: "background"
+
+    chart_takeaway:
+      use: "Any chart. Never a bare chart."
+      elements: "title, chart occupying ~65% width, one-sentence takeaway beside or below (18pt)"
+      fill: "background"
+
+    quote:
+      use: "Client testimonial, stakeholder input, research finding"
+      elements: "quote (28pt, primary), attribution (14pt, muted_text)"
+      fill: "surface"
+
+    timeline:
+      use: "Sequence, roadmap, phases — 3 to 5 steps"
+      elements: "title, horizontal track with labelled milestones (16pt)"
+      fill: "background"
+
+    closing:
+      use: "Final slide. Never a bare 'Thank you' — that fails the content check."
+      elements: "next steps or the decision being asked for, 2-4 items"
+      fill: "background"
 
 colors:
-  primary: "0F2A4A" 
-  accent: "FF6B6B"
+  primary: "0F2A4A"          
+  accent: "FF6B6B"           
   body_text: "333333"
+  muted_text: "6B7280"       
+  background: "FFFFFF"
+  surface: "F5F7FA"         
+  border: "D9DEE6"          
+  on_primary: "FFFFFF"
+  chart_series:
+    - "0F2A4A"
+    - "FF6B6B"
+    - "3E6D9C"
+    - "E0A458"
+    - "5FA8A0"
+    - "8C93A8"
+
+  chart_neutral:
+    gridlines: "E5E9EF"
+    axis_labels: "6B7280"
 
 fonts:
-  heading: "Ariel"
-  body: "Ariel"
+  heading: "Arial"
+  body: "Arial"
+  fallback: "Helvetica"
+
+type_scale:
+  slide_title: 32
+  section_header: 24
+  body: 18
+  caption: 12
+  min_title: 24
+  min_body: 14
 
 logo:
   path: "assets/company-logo.jpg"
   position: "top-right, title slide only"
+  width_in: 1.4
+  min_width_in: 0.9
+  clear_space_in: 0.25
 
 slide_caps:
-  internal_update: 6            # max slides
-  client_proposal: 12           # max slides
-  exec_summary: 5               # max slides
+  internal_update: 6
+  client_proposal: 12
+  exec_summary: 5
+  default: 10
 
 voice_rules:      
-  - "Never uses exclamation marks, even in good-news slides"
   - "States numbers plainly — '14% increase,' never 'a whopping 14% jump'"
-  - "No rhetorical questions as slide titles"
 
 footer:
   client_facing_text: "Company-X — Confidential"
   applies_to: "every slide except the title"
+  font_size: 12
+  color: "6B7280"
