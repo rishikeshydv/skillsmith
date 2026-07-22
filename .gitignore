@@ -1,0 +1,16 @@
+# Personal / unsanitized skill copy — has real brand, contact, and client info.
+# The sanitized, shippable version lives at the repo root (SKILL.md, brand.example.yaml, etc).
+slide_creation/
+slide_creation.zip
+
+# Your real brand config — copy brand.example.yaml to brand.yaml and fill it in locally.
+brand.yaml
+
+# Build tooling
+.venv-build/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS cruft
+.DS_Store

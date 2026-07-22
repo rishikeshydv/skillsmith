@@ -1,6 +1,19 @@
+# Example brand config for the slide-creation skill.
+#
+# This file is illustrative, not a set of defaults you should keep. Every value
+# below — colors, caps, footer text, voice rules — is one company's convention,
+# copied here only to show the shape of the file. Copy this to `brand.yaml`
+# (gitignored, so your real values never get committed) and replace everything.
+#
+#   cp brand.example.yaml brand.yaml
+#
+# scripts/slop_check.py reads brand.yaml next to it by default and falls back
+# to generic minimums if brand.yaml doesn't exist, so the skill still works
+# with no config — it just won't know your brand.
+
 org:
-  name: "Company-X"
-  maintainer_contact: "Bikalpa Neupane, Head of AI"
+  name: "Your Company"
+  maintainer_contact: "Jane Doe, Head of Design"   # who employees mention recurring fixes to
 
 layout:
   canvas:
@@ -14,24 +27,26 @@ layout:
     bottom_in: 0.55
 
   grid:
-    title_y_in: 0.55        
+    title_y_in: 0.55
     title_h_in: 0.9
-    body_y_in: 1.7            
-    gutter_in: 0.4            
+    body_y_in: 1.7
+    gutter_in: 0.4
     footer_y_in: 6.95
 
   density:
     max_bullets_per_slide: 5
     max_words_per_bullet: 12
-    max_consecutive_bullet_slides: 2 
+    max_consecutive_bullet_slides: 2
 
   charts:
     gridline_weight_pt: 0.75
     axis_label_size: 12
     data_label_size: 12
-    legend: "bottom"     
+    legend: "bottom"
     max_series: 6
 
+  # Example archetypes — a starting vocabulary of slide layouts. Add, remove,
+  # or rename these to match how your own decks are actually structured.
   archetypes:
     title_slide:
       use: "Slide 1 only"
@@ -78,14 +93,15 @@ layout:
       elements: "next steps or the decision being asked for, 2-4 items"
       fill: "background"
 
+# Example palette — replace with your own hex values.
 colors:
-  primary: "0F2A4A"          
-  accent: "FF6B6B"           
+  primary: "0F2A4A"
+  accent: "FF6B6B"
   body_text: "333333"
-  muted_text: "6B7280"       
+  muted_text: "6B7280"
   background: "FFFFFF"
-  surface: "F5F7FA"         
-  border: "D9DEE6"          
+  surface: "F5F7FA"
+  border: "D9DEE6"
   on_primary: "FFFFFF"
   chart_series:
     - "0F2A4A"
@@ -113,23 +129,29 @@ type_scale:
   min_body: 14
 
 logo:
-  path: "assets/company-logo.jpg"
+  path: "assets/logo.png"          # PNG, not JPEG — the checker flags JPEG logos (no transparency)
   position: "top-right, title slide only"
   width_in: 1.4
   min_width_in: 0.9
   clear_space_in: 0.25
 
+# Example slide caps by deck type — pick numbers that match your own meetings,
+# not these.
 slide_caps:
   internal_update: 6
   client_proposal: 12
   exec_summary: 5
   default: 10
 
-voice_rules:      
+# Example voice rules — one company's house style, not a universal rule.
+# Write your own from decks that already sound like you.
+voice_rules:
   - "States numbers plainly — '14% increase,' never 'a whopping 14% jump'"
 
+# Example footer — swap in your own confidentiality line, or drop this
+# section if your decks don't carry one.
 footer:
-  client_facing_text: "Company-X — Confidential"
+  client_facing_text: "Your Company — Confidential"
   applies_to: "every slide except the title"
   font_size: 12
   color: "6B7280"

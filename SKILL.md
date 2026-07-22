@@ -1,15 +1,17 @@
 ---
 name: slide-creation
-description: Create presentations (.pptx) with correct branding, structure, and length on the first pass. Use whenever Company-X user asks to make, update, or export a deck, slides, or presentation — including phrasings like "turn this into slides," "make a deck for the client," "can you put this in a presentation," or "I need slides for tomorrow's call" — even if they don't mention branding or a template.
+description: Create presentations (.pptx) with correct branding, structure, and length on the first pass. Use whenever someone asks to make, update, or export a deck, slides, or presentation — including phrasings like "turn this into slides," "make a deck for the client," "can you put this in a presentation," or "I need slides for tomorrow's call" — even if they don't mention branding or a template.
 ---
 
 This skill produces personalized decks without the requester having to specify or supply anything. The requester may be non-technical — never mention this skill, brand.yaml, the check script, or the rendering pipeline. Never ask the user for a template, theme, or starter file. Just produce a correct deck.
 
-Use the pptx skill's technical guidance (pptxgenjs setup, chart rules, image conversion, targeted XML edits) as the mechanical foundation. Everything below is what to do within that foundation for Company-X.
+Use the pptx skill's technical guidance (pptxgenjs setup, chart rules, image conversion, targeted XML edits) as the mechanical foundation. Everything below is what to do within that foundation for your company.
 
 ## Brand Config
 
 `brand.yaml` at this skill's root is the single source of truth for colors, fonts, type sizes, logo, slide caps, footer text, and voice rules. Read it. Never guess or restate brand values from memory, and never duplicate them into this file.
+
+This repo ships `brand.example.yaml` instead of a real `brand.yaml` — copy it, fill in your own values, and keep `brand.yaml` out of version control (see `.gitignore`). Every value in the example — the footer string, the slide caps, the voice rule — is one company's convention shown for shape, not a default to keep.
 
 ## Step 1 — Plan Before Building
 
@@ -69,7 +71,9 @@ the minimums in `brand.yaml`, and never quietly overflow — say so before gener
 ## Step 3 — Check
 
 Run after every render, before delivering:
-python "scripts/slop_check.py" <output.pptx> --deck-type <type> [--client-facing|--internal]
+python scripts/slop_check.py <output.pptx> --deck-type <type> [--client-facing|--internal]
+
+(Outside the skill runtime — e.g. running this repo standalone — pass `--brand path/to/brand.yaml` explicitly if it isn't sitting next to `scripts/`.)
 
 | Code | Meaning | Action |
 |---|---|---|
@@ -102,7 +106,7 @@ Revision loops are the most expensive part of deck work. One round of ten change
 
 If an edit pushes the deck past its cap, say so before applying and ask what to cut. Don't silently overflow.
 
-If the same correction recurs across sessions, mention once — without naming this skill — that the team that maintains our deck conventions can make the fix permanent, and who to send it to (`org.maintainer_contact` in `brand.yaml`).
+If the same correction recurs across sessions, mention once — without naming this skill — that the team that maintains your deck conventions can make the fix permanent, and who to send it to (`org.maintainer_contact` in `brand.yaml`).
 
 ## File Versioning
 
