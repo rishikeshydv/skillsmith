@@ -1,19 +1,6 @@
-# Example brand config for the slide-creation skill.
-#
-# This file is illustrative, not a set of defaults you should keep. Every value
-# below — colors, caps, footer text, voice rules — is one company's convention,
-# copied here only to show the shape of the file. Copy this to `brand.yaml`
-# (gitignored, so your real values never get committed) and replace everything.
-#
-#   cp brand.example.yaml brand.yaml
-#
-# scripts/slop_check.py reads brand.yaml next to it by default and falls back
-# to generic minimums if brand.yaml doesn't exist, so the skill still works
-# with no config — it just won't know your brand.
-
 org:
   name: "Your Company"
-  maintainer_contact: "Jane Doe, Head of Design"   # who employees mention recurring fixes to
+  maintainer_contact: "Jane Doe, Head of Design" 
 
 layout:
   canvas:
@@ -45,8 +32,6 @@ layout:
     legend: "bottom"
     max_series: 6
 
-  # Example archetypes — a starting vocabulary of slide layouts. Add, remove,
-  # or rename these to match how your own decks are actually structured.
   archetypes:
     title_slide:
       use: "Slide 1 only"
@@ -93,7 +78,6 @@ layout:
       elements: "next steps or the decision being asked for, 2-4 items"
       fill: "background"
 
-# Example palette — replace with your own hex values.
 colors:
   primary: "0F2A4A"
   accent: "FF6B6B"
@@ -129,27 +113,21 @@ type_scale:
   min_body: 14
 
 logo:
-  path: "assets/logo.png"          # PNG, not JPEG — the checker flags JPEG logos (no transparency)
+  path: "assets/logo.png"        
   position: "top-right, title slide only"
   width_in: 1.4
   min_width_in: 0.9
   clear_space_in: 0.25
 
-# Example slide caps by deck type — pick numbers that match your own meetings,
-# not these.
 slide_caps:
   internal_update: 6
   client_proposal: 12
   exec_summary: 5
   default: 10
 
-# Example voice rules — one company's house style, not a universal rule.
-# Write your own from decks that already sound like you.
 voice_rules:
   - "States numbers plainly — '14% increase,' never 'a whopping 14% jump'"
 
-# Example footer — swap in your own confidentiality line, or drop this
-# section if your decks don't carry one.
 footer:
   client_facing_text: "Your Company — Confidential"
   applies_to: "every slide except the title"
